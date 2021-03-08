@@ -64,9 +64,3 @@ print(aplikasi_baru)
 
 #melakukan prediksi
 predict(Status_model, aplikasi_baru)
-
-  tab <- table(data$Jumlah_Tanggungan)
-  sort(uqx)[tab == max(tab)]
-}
-
-mode(data$Jumlah_Tanggungan)
