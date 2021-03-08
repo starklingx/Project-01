@@ -1,0 +1,72 @@
+#Menampilkan data
+data
+str(data)
+
+#Melakukan konversi kolom Status menjadi factor
+data$Status <- as.factor(data$Status)
+
+#Melihat struktur setelah konversi
+str(data)
+
+#Menghilangkan beberapa variable input dari dataset 
+input_columns <- c("Selisih", "Jumlah_Tanggungan")
+datafeed <- data[ , input_columns ]
+str(datafeed)
+
+#Membagi data training dan data testing
+set.seed(22)
+indeks_training_set <- sample(108, 86)
+
+#Membuat dan menampilkan training set dan testing set
+input_training_set <- datafeed[indeks_training_set,]
+class_training_set <- data[indeks_training_set,]$Status
+input_testing_set <- datafeed[-indeks_training_set,]
+
+str(input_training_set)
+str(class_training_set)
+str(input_testing_set)
+
+library("C50")
+
+#menghasilkan dan menampilkan summary model
+Status_model <- C5.0(input_training_set, class_training_set, control = C5.0Control(label="Status"))
+summary(Status_model)
+
+#plot decission tree
+plot(Status_model)
+
+#menggunakan model untuk prediksi testing set
+predict(Status_model, input_testing_set)
+
+#menyimpan hasil prediksi testing set ke dalam kolom hasil_prediksi
+input_testing_set$Status <- data[-indeks_training_set,]$Status
+input_testing_set$hasil_prediksi <- predict(Status_model, input_testing_set)
+print(input_testing_set)
+
+library("reshape2")
+
+#membuat confusion matrix
+dcast(hasil_prediksi ~ Status, data = input_testing_set)
+
+#Menghitung jumlah prediksi yang benar
+nrow(input_testing_set[input_testing_set$Status==input_testing_set$hasil_prediksi,])
+
+input_testing_set$Status==input_testing_set$hasil_prediksi
+
+input_testing_set[input_testing_set$Status==input_testing_set$hasil_prediksi,]
+
+#Menghitung jumlah prediksi yang salah
+nrow(input_testing_set[input_testing_set$Status!=input_testing_set$hasil_prediksi,])
+
+#Membuat data frame aplikasi baru
+aplikasi_baru <- data.frame(Selisih = 2000000 , Jumlah_Tanggungan = 2)
+print(aplikasi_baru)
+
+#melakukan prediksi
+predict(Status_model, aplikasi_baru)
+
+  tab <- table(data$Jumlah_Tanggungan)
+  sort(uqx)[tab == max(tab)]
+}
+
+mode(data$Jumlah_Tanggungan)
